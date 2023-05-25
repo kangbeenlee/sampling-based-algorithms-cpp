@@ -252,7 +252,12 @@ public:
 
             // If collision free then, add random node in node list
             // If new node is close to target node, then generate path from init to target
-            if (isCollision(new_node, nearest_node) == false)
+            if (isCollision(new_node, nearest_node))
+            {
+                delete new_node;
+                continue;
+            }
+            else
             {
                 new_node->setParent(nearest_node);
                 node_list.push_back(new_node);
@@ -265,7 +270,12 @@ public:
                 Node* new_node_prime = steer2(new_node, nearest_node_prime);
 
                 // Extend function in paper
-                if (isCollision(new_node_prime, nearest_node_prime) == false)
+                if (isCollision(new_node_prime, nearest_node_prime))
+                {
+                    delete new_node_prime;
+                    continue;
+                }
+                else
                 {
                     new_node_prime->setParent(nearest_node_prime);
                     opposite_node_list.push_back(new_node_prime);
@@ -296,31 +306,23 @@ public:
                         {
                             extractPathNodes(new_node, new_node_prime);
                             success_ = true;
-                            break;
+                            return;
                         }
                     }
-                    if (success_)
-                        break;
                 }
-                else
-                    delete new_node_prime;
             }
-            else
-                delete new_node;
+
 
             // Swap function in paper
-            if (node_list.size() < opposite_node_list.size())
-            {
-                // Change tree
-                std::list<Node*> temp_list = opposite_node_list;
-                opposite_node_list = node_list;
-                node_list = temp_list;
+            // Change tree
+            std::list<Node*> temp_list = opposite_node_list;
+            opposite_node_list = node_list;
+            node_list = temp_list;
 
-                // Change biased target
-                Node* temp_root = opposite_root;
-                opposite_root = root;
-                root = temp_root;
-            }
+            // Change biased target
+            Node* temp_root = opposite_root;
+            opposite_root = root;
+            root = temp_root;
         }
 
         // Success description
