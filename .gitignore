@@ -1,4 +1,4 @@
 .vscode
 py_rrt_connect
-./rrt/build
-./rrt_connect/build
+rrt/build/
+rrt_connect/build/
